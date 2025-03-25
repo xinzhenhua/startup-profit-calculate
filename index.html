@@ -7,15 +7,540 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.0.18/dist/sweetalert2.min.css">
     <style>
+        /* 添加高端视觉设计和动效 */
         body {
-            font-family: 'Microsoft YaHei', sans-serif;
-            line-height: 1.6;
-            margin: 0;
-            padding: 20px;
-            background-color: #f5f7fa;
+            background: linear-gradient(135deg, #1a2a6c, #2a4858, #1a3a4c);
+            background-attachment: fixed;
+            color: #eaeaea;
+            font-family: 'Roboto', 'Helvetica Neue', sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect fill-opacity="0.03" width="50" height="50" x="0" y="0"/><rect fill-opacity="0.03" width="50" height="50" x="50" y="50"/></svg>');
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
             color: #333;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            border-radius: 12px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            max-width: 1200px;
+            margin: 30px auto;
+            animation: fadeIn 0.8s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(155, 89, 182, 0.2));
+            border-radius: 0 0 0 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 顶部品牌标识 */
+        .brand-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        /* 修改logo样式，确保正方形显示 */
+        .logo {
+            background: linear-gradient(135deg, #3498db, #9b59b6);
+            color: white;
+            width: 40px;  /* 减小默认尺寸 */
+            height: 40px; /* 保持正方形 */
+            min-width: 40px; /* 防止被压缩 */
+            min-height: 40px; /* 防止被压缩 */
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px; /* 适配新的尺寸 */
+            margin-right: 15px;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            flex-shrink: 0; /* 防止被压缩 */
+        }
+
+        /* 品牌名称样式优化 */
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 0;
+            flex-grow: 1;
+            padding-left: 10px;
+            border-left: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        /* 标签和面板 */
+        .tabs {
+            display: flex;
+            background: #f5f7fa;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .tab {
+            padding: 15px 30px;
+            cursor: pointer;
             transition: all 0.3s ease;
+            position: relative;
+            font-weight: 500;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tab::before {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        .tab:hover::before {
+            width: 40%;
+        }
+
+        .tab.active {
+            color: #3498db;
+            font-weight: 600;
+        }
+
+        .tab.active::before {
+            width: 80%;
+        }
+
+        .tab i {
+            margin-right: 8px;
+            font-size: 18px;
+        }
+
+        /* 输入表单和控件 */
+        .input-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 5px;
+        }
+
+        .input-container {
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        .input-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        /* 修复移动端选择框文字被截断问题 */
+        .input-container select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            background: #f8fafc;
+            font-size: 14px;
+            transition: all 0.3s;
+            color: #2c3e50;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+            height: auto;
+            min-height: 48px;
+            text-overflow: ellipsis;
+            line-height: 1.5;
+            appearance: menulist;
+            -webkit-appearance: menulist; /* 针对iOS设备 */
+        }
+
+        /* 确保iOS设备上的选择框显示正常 */
+        @media screen and (max-width: 768px) {
+            .input-container select {
+                font-size: 16px; /* iOS上小于16px的字体会导致页面缩放 */
+                padding: 10px 12px;
+                min-height: 50px; /* 增加最小高度确保文字显示完整 */
+            }
+            
+            /* 移动端输入框样式优化 */
+            .input-container input {
+                font-size: 16px;
+                min-height: 44px;
+            }
+            
+            /* 修复选择框的箭头图标 */
+            .input-container select::-ms-expand {
+                display: block;
+            }
+            
+            /* 调整标签文字大小 */
+            .input-container label {
+                font-size: 15px;
+                margin-bottom: 10px;
+            }
+        }
+
+        .input-container input,
+        .input-container select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e6ed;
+            border-radius: 8px;
+            background: #f8fafc;
+            font-size: 14px;
+            transition: all 0.3s;
+            color: #2c3e50;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.02);
+        }
+
+        .input-container input:focus,
+        .input-container select:focus {
+            border-color: #3498db;
+            background: #fff;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.1);
+            outline: none;
+        }
+
+        .input-container input::placeholder {
+            color: #a0aec0;
+        }
+
+        /* 按钮样式 */
+        button {
+            background: linear-gradient(135deg, #3498db, #9b59b6);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(52, 152, 219, 0.5);
+        }
+
+        button:active {
+            transform: translateY(1px);
+            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.3);
+        }
+
+        button::after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: -100%;
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+            transition: all 0.8s;
+        }
+
+        button:hover::after {
+            left: 100%;
+        }
+
+        /* 结果卡片 */
+        .results-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 25px;
+            overflow: hidden;
+            width: 100%;
+            transition: all 0.3s ease;
+        }
+
+        /* 统一卡片标题样式 */
+        .results-card h3,
+        #basicFinancialCard h3,
+        #businessAnalysisCard h3 {
+            background: linear-gradient(135deg, #3498db, #9b59b6) !important;
+            color: white;
+            padding: 15px 20px;
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            border-radius: 12px 12px 0 0;
+            text-align: center;
+        }
+
+        /* 统一卡片内容样式 */
+        .results-card .card-content {
+            padding: 20px;
+        }
+
+        /* 统一表格样式 */
+        .results-card table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .results-card td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .results-card tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 移动端适配 */
+        @media screen and (max-width: 768px) {
+            .results-card {
+                margin: 15px 0;
+                width: 100%;
+            }
+            
+            /* 确保两个卡片大小一致 */
+            #basicFinancialCard,
+            #businessAnalysisCard {
+                width: 100%;
+                margin: 15px 0;
+                min-height: auto; /* 移除最小高度限制 */
+            }
+            
+            /* 统一标题样式 */
+            .results-card h3,
+            #basicFinancialCard h3,
+            #businessAnalysisCard h3 {
+                font-size: 16px;
+                padding: 12px 15px;
+                height: auto;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            /* 统一内容区域样式 */
+            .results-card .card-content {
+                padding: 15px;
+            }
+            
+            /* 调整表格样式 */
+            .results-card td {
+                padding: 10px;
+                font-size: 14px;
+            }
+            
+            /* 确保内容区域高度一致 */
+            .results-card .card-content {
+                min-height: 200px; /* 设置最小高度确保视觉一致性 */
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+            }
+        }
+
+        /* 超小屏幕适配 */
+        @media screen and (max-width: 360px) {
+            .results-card h3,
+            #basicFinancialCard h3,
+            #businessAnalysisCard h3 {
+                font-size: 15px;
+                padding: 10px;
+            }
+            
+            .results-card td {
+                padding: 8px;
+                font-size: 13px;
+            }
+        }
+
+        /* 修改结果卡片标题为蓝紫渐变 */
+        .results-card h3::after,
+        #basicFinancialCard h3::after,
+        #businessAnalysisCard h3::after,
+        .results-card .card-header::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, 
+                rgba(255,255,255,0) 0%, 
+                rgba(255,255,255,0.2) 50%, 
+                rgba(255,255,255,0) 100%);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { left: -100%; }
+            20% { left: 100%; }
+            100% { left: 100%; }
+        }
+
+        /* 财务分析结果主标题 */
+        .results-title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            position: relative;
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        .results-title::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 15%;
+            width: 70%;
+            height: 3px;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+            border-radius: 3px;
+        }
+
+        /* 动画效果 */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* 图表和数据可视化 */
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .chart-container:hover {
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 结果表格美化 */
+        .results-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .results-table td {
+            padding: 12px 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .results-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .result-value {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .result-value.highlight {
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        /* 浮动粒子背景 */
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        /* 响应性改进 */
+        @media (max-width: 768px) {
+            .container {
+                margin: 15px;
+                padding: 20px;
+            }
+            
+            .input-form {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .results-card h3 {
+                font-size: 16px;
+                padding: 12px 15px;
+            }
+            
+            .results-table td {
+                padding: 10px 15px;
+            }
         }
         .container {
             max-width: 1000px;
@@ -745,11 +1270,496 @@
                 font-size: 14px;
             }
         }
+        /* 添加分析网格样式 */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .analysis-section {
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .analysis-section h4 {
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-size: 16px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        /* 移动端优化 */
+        @media (max-width: 768px) {
+            .analysis-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .analysis-section {
+                padding: 10px;
+            }
+            
+            .analysis-section h4 {
+                font-size: 15px;
+            }
+        }
+
+        /* 安全边际分析样式 */
+        .safety-level-container {
+            padding-top: 10px !important;
+        }
+
+        .safety-level-indicator {
+            height: 8px;
+            background: linear-gradient(to right, #e74c3c, #f39c12, #f1c40f, #2ecc71, #27ae60);
+            border-radius: 4px;
+            position: relative;
+            margin: 10px 0;
+        }
+
+        .safety-pointer {
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-left: 6px solid transparent;
+            border-right: 6px solid transparent;
+            border-top: 8px solid #333;
+            bottom: -8px;
+            transform: translateX(-50%);
+            transition: all 0.5s;
+        }
+
+        .safety-level-text {
+            text-align: center;
+            margin-top: 15px;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: all 0.5s;
+        }
+
+        .danger-level {
+            background-color: rgba(231, 76, 60, 0.15);
+            color: #c0392b;
+        }
+
+        .warning-level {
+            background-color: rgba(243, 156, 18, 0.15);
+            color: #d35400;
+        }
+
+        .caution-level {
+            background-color: rgba(241, 196, 15, 0.15);
+            color: #f39c12;
+        }
+
+        .safe-level {
+            background-color: rgba(46, 204, 113, 0.15);
+            color: #27ae60;
+        }
+
+        .very-safe-level {
+            background-color: rgba(39, 174, 96, 0.15);
+            color: #16a085;
+        }
+
+        /* 添加盈亏平衡指标标题和详细分析 */
+        .section-title-container {
+            margin: 30px 0 20px 0;
+            text-align: center;
+        }
+
+        .section-title {
+            display: inline-block;
+            padding: 8px 20px;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .breakeven-title {
+            background-color: #3498db; /* 使用与图片相同的蓝色 */
+            background: linear-gradient(to right, #2980b9, #3498db);
+        }
+
+        /* 增强盈亏平衡分析卡片样式 */
+        .breakeven-card {
+            border-left: 4px solid #3498db;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .breakeven-indicator {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .indicator-label {
+            width: 150px;
+            text-align: right;
+            padding-right: 15px;
+            color: #555;
+        }
+
+        .indicator-value {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 16px;
+        }
+
+        .indicator-description {
+            margin-left: 15px;
+            color: #7f8c8d;
+            font-size: 13px;
+            font-style: italic;
+        }
+
+        /* 添加分隔线样式 */
+        .section-divider {
+            border-top: 1px dashed #e0e0e0;
+        }
+
+        /* 优化表格布局，确保不溢出 */
+        .results-table tr td:first-child {
+            max-width: 60%;
+        }
+
+        .results-table tr td:last-child {
+            max-width: 40%;
+        }
+
+        /* 添加移动端文字换行和显示优化样式 */
+        @media (max-width: 480px) {
+            /* 优化安全边际和现金流状态文字显示 */
+            .safety-level-text, 
+            #cashFlowStatusResult span {
+                display: block;
+                padding: 8px;
+                margin-top: 5px;
+                font-size: 13px;
+                line-height: 1.4;
+                text-align: left;
+                white-space: normal; /* 允许文字换行 */
+                word-wrap: break-word; /* 长单词换行 */
+            }
+
+            /* 调整结果表格布局 */
+            .results-table td.result-label {
+                width: 45%; /* 减小标签列宽度 */
+                padding-right: 5px;
+            }
+
+            .results-table td.result-value {
+                width: 55%; /* 增加值列宽度 */
+                padding-left: 5px;
+            }
+
+            /* 确保文字不会被截断 */
+            .results-table td {
+                white-space: normal; /* 允许文字换行 */
+                word-wrap: break-word;
+                font-size: 12px; /* 稍微减小字体大小 */
+            }
+        }
+
+        /* 优化状态文字显示 */
+        .status-text {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            margin-top: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* 统一结果页面风格，使用蓝紫渐变配色 */
+        /* 状态指示器 */
+        .status-indicator {
+            background: linear-gradient(135deg, #3498db, #9b59b6);
+            border-radius: 10px;
+            padding: 10px 15px;
+            margin-top: 10px;
+            color: white;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+            border-left: 4px solid rgba(255, 255, 255, 0.5);
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        /* 安全边际分析 */
+        .safety-margin-container {
+            margin-top: 15px;
+        }
+
+        .safety-meter {
+            height: 8px;
+            background: linear-gradient(90deg, 
+                #e74c3c 0%, 
+                #e74c3c 20%, 
+                #f39c12 20%, 
+                #f39c12 40%, 
+                #f1c40f 40%, 
+                #f1c40f 60%, 
+                #2ecc71 60%, 
+                #2ecc71 100%);
+            border-radius: 4px;
+            position: relative;
+            margin: 15px 0 5px 0;
+            overflow: hidden;
+        }
+
+        .safety-indicator {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: linear-gradient(135deg, #3498db, #9b59b6);
+            border-radius: 50%;
+            top: -2px;
+            transform: translateX(-50%);
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.8);
+            border: 2px solid white;
+            transition: left 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+
+        .safety-level-text {
+            margin-top: 10px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(155, 89, 182, 0.15));
+            border-left: 3px solid #3498db;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+
+        /* 现金流分析 */
+        .cash-flow-status {
+            text-align: center;         /* 文字居中 */
+            white-space: normal;        /* 允许自动换行 */
+            word-wrap: break-word;      /* 长单词换行 */
+            padding: 12px 20px;         /* 增加内边距 */
+            margin: 5px 0;
+            font-size: 14px;
+            color: #2c3e50;            /* 更深的文字颜色 */
+            background: linear-gradient(to right, rgba(52, 152, 219, 0.1), rgba(155, 89, 182, 0.1));  /* 轻微的渐变背景 */
+            border-radius: 8px;         /* 圆角 */
+            line-height: 1.5;
+            display: inline-block;      /* 内联块级显示 */
+            width: auto;               /* 宽度自适应 */
+            min-width: 200px;          /* 最小宽度 */
+            max-width: 100%;           /* 最大宽度 */
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);  /* 轻微阴影 */
+            border: 1px solid rgba(52, 152, 219, 0.2);  /* 淡色边框 */
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        /* 移动端适配 */
+        @media screen and (max-width: 768px) {
+            .cash-flow-status {
+                font-size: 13px;
+                padding: 10px 15px;
+                line-height: 1.4;
+                min-width: 180px;      /* 移动端稍微减小最小宽度 */
+            }
+        }
+
+        /* 超小屏幕适配 */
+        @media screen and (max-width: 360px) {
+            .cash-flow-status {
+                font-size: 12px;
+                padding: 8px 12px;
+                min-width: 160px;
+            }
+        }
+
+        .cash-flow-status.warning {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.15), rgba(241, 196, 15, 0.15));
+            border-left: 3px solid #e74c3c;
+        }
+
+        .cash-flow-status.good {
+            background: linear-gradient(135deg, rgba(46, 204, 113, 0.15), rgba(26, 188, 156, 0.15));
+            border-left: 3px solid #2ecc71;
+        }
+
+        /* 图表样式增强 */
+        .chart-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-top: 25px;
+            border: 1px solid rgba(52, 152, 219, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-container::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+        }
+
+        /* 财务分析结果标题样式 */
+        .results-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .results-header h2 {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            display: inline-block;
+            padding: 5px 0;
+            position: relative;
+        }
+
+        .results-header h2::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+            width: 80%;
+            height: 3px;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+            border-radius: 2px;
+        }
+
+        /* 修改品牌标题容器样式 */
+        .brand-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        }
+
+        /* 品牌名称样式优化 */
+        h1 {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(90deg, #3498db, #9b59b6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin: 0;
+            flex-grow: 1;
+            padding-left: 10px;
+            border-left: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        /* 移动端适配 */
+        @media screen and (max-width: 768px) {
+            .brand-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                padding: 15px 0;
+            }
+
+            .logo {
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+
+            h1 {
+                font-size: 18px;
+                padding: 10px 0 0 0;
+                border-left: none;
+                border-top: 1px solid rgba(0, 0, 0, 0.1);
+                width: 100%;
+                text-align: center;
+                line-height: 1.4;
+                word-break: break-word;
+            }
+        }
+
+        /* 超小屏幕适配 */
+        @media screen and (max-width: 360px) {
+            h1 {
+                font-size: 16px;
+                padding-top: 8px;
+            }
+        }
+
+        /* 添加现金流状况文字样式 */
+        .cash-flow-status {
+            text-align: left;           /* 左对齐 */
+            white-space: normal;        /* 允许自动换行 */
+            word-wrap: break-word;      /* 长单词换行 */
+            padding: 8px 15px;
+            margin: 0;
+            font-size: 14px;
+            color: #666;
+            background: #f8f9fa;
+            border-radius: 4px;
+            line-height: 1.5;
+            display: block;
+            width: 100%;
+        }
+
+        /* 移动端适配 */
+        @media screen and (max-width: 768px) {
+            .cash-flow-status {
+                font-size: 13px;
+                padding: 6px 10px;
+                line-height: 1.4;      /* 稍微减小行高，使文字更紧凑 */
+            }
+        }
     </style>
+    <!-- 添加iOS主屏幕图标设置 -->
+    <link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiB2aWV3Qm94PSIwIDAgMTgwIDE4MCI+CiAgPGRlZnM+CiAgICA8bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQiIHgxPSIwJSIgeTE9IjAlIiB4Mj0iMTAwJSIgeTI9IjEwMCUiPgogICAgICA8c3RvcCBvZmZzZXQ9IjAlIiBzdHlsZT0ic3RvcC1jb2xvcjojMzQ5OGRiOyIgLz4KICAgICAgPHN0b3Agb2Zmc2V0PSIxMDAlIiBzdHlsZT0ic3RvcC1jb2xvcjojOWI1OWI2OyIgLz4KICAgIDwvbGluZWFyR3JhZGllbnQ+CiAgPC9kZWZzPgogIDxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiByeD0iMzYiIHJ5PSIzNiIgZmlsbD0idXJsKCNncmFkKSIgLz4KICA8dGV4dCB4PSI5MCIgeT0iMTA2IiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI3MCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5WUTwvdGV4dD4KPC9zdmc+">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="VentureQuant">
+    <!-- 添加移动端启动画面 -->
+    <!-- iPhone X (1125px x 2436px) -->
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMTI1IiBoZWlnaHQ9IjI0MzYiIHZpZXdCb3g9IjAgMCAxMTI1IDI0MzYiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzFhMmE2YzsiIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6IzJhNDg1ODsiIC8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMTEyNSIgaGVpZ2h0PSIyNDM2IiBmaWxsPSJ1cmwoI2dyYWQpIiAvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDU2Mi41LCAxMjE4KSI+CiAgICA8cmVjdCB4PSItMTAwIiB5PSItMTAwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjQwIiByeT0iNDAiIGZpbGw9ImxpbmVhckdyYWRpZW50KDEzNWRlZywgIzM0OThkYiwgIzliNTliNikiIC8+CiAgICA8dGV4dCB4PSIwIiB5PSIyNSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIj5WUTwvdGV4dD4KICA8L2c+CiAgPHRleHQgeD0iNTYyLjUiIHk9IjE0MDAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjUwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPkJVSUxESU5HIEVYQ0VMTEVODEU8L3RleHQ+Cjwvc3ZnPg==">
+
+    <!-- iPhone 8, 7, 6s, 6 (750px x 1334px) -->
+    <link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI3NTAiIGhlaWdodD0iMTMzNCIgdmlld0JveD0iMCAwIDc1MCAxMzM0Ij4KICA8ZGVmcz4KICAgIDxsaW5lYXJHcmFkaWVudCBpZD0iZ3JhZCIgeDE9IjAlIiB5MT0iMCUiIHgyPSIxMDAlIiB5Mj0iMTAwJSI+CiAgICAgIDxzdG9wIG9mZnNldD0iMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMxYTJhNmM7IiAvPgogICAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0eWxlPSJzdG9wLWNvbG9yOiMyYTQ4NTg7IiAvPgogICAgPC9saW5lYXJHcmFkaWVudD4KICA8L2RlZnM+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9Ijc1MCIgaGVpZ2h0PSIxMzM0IiBmaWxsPSJ1cmwoI2dyYWQpIiAvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDM3NSwgNjY3KSI+CiAgICA8cmVjdCB4PSItMTAwIiB5PSItMTAwIiB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgcng9IjQwIiByeT0iNDAiIGZpbGw9ImxpbmVhckdyYWRpZW50KDEzNWRlZywgIzM0OThkYiwgIzliNTliNikiIC8+CiAgICA8dGV4dCB4PSIwIiB5PSIyNSIgZm9udC1mYW1pbHk9IkFyaWFsLCBIZWx2ZXRpY2EsIHNhbnMtc2VyaWYiIGZvbnQtc2l6ZT0iMTIwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGFsaWdubWVudC1iYXNlbGluZT0ibWlkZGxlIj5WUTwvdGV4dD4KICA8L2c+CiAgPHRleHQgeD0iMzc1IiB5PSI4NTAiIGZvbnQtZmFtaWx5PSJBcmlhbCwgSGVsdmV0aWNhLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjQwIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiPlZlbnR1cmVRdWFudDwvdGV4dD4KPC9zdmc+">
+
+    <!-- iPad Pro 12.9" (2048px x 2732px) -->
+    <link rel="apple-touch-startup-image" media="(device-width: 1024px) and (device-height: 1366px) and (-webkit-device-pixel-ratio: 2)" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDQ4IiBoZWlnaHQ9IjI3MzIiIHZpZXdCb3g9IjAgMCAyMDQ4IDI3MzIiPgogIDxkZWZzPgogICAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjEwMCUiIHkyPSIxMDAlIj4KICAgICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3R5bGU9InN0b3AtY29sb3I6IzFhMmE2YzsiIC8+CiAgICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3R5bGU9InN0b3AtY29sb3I6IzJhNDg1ODsiIC8+CiAgICA8L2xpbmVhckdyYWRpZW50PgogIDwvZGVmcz4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMjA0OCIgaGVpZ2h0PSIyNzMyIiBmaWxsPSJ1cmwoI2dyYWQpIiAvPgogIDxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKDEwMjQsIDEzNjYpIj4KICAgIDxyZWN0IHg9Ii0xNTAiIHk9Ii0xNTAiIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiByeD0iNjAiIHJ5PSI2MCIgZmlsbD0ibGluZWFyR3JhZGllbnQoMTM1ZGVnLCAjMzQ5OGRiLCAjOWI1OWI2KSIgLz4KICAgIDx0ZXh0IHg9IjAiIHk9IjQ1IiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSIxODAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgYWxpZ25tZW50LWJhc2VsaW5lPSJtaWRkbGUiPlZRPC90ZXh0PgogIDwvZz4KICA8dGV4dCB4PSIxMDI0IiB5PSIxNjUwIiBmb250LWZhbWlseT0iQXJpYWwsIEhlbHZldGljYSwgc2Fucy1zZXJpZiIgZm9udC1zaXplPSI2MCIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIj5WZW50dXJlUXVhbnQgfCDliJvmiqXnuqfotYTlh7rmiqXnrZbns7vjgII8L3RleHQ+Cjwvc3ZnPg==">
+
+    <!-- PWA相关设置，增强应用体验 -->
+    <meta name="theme-color" content="#1a2a6c">
+    <link rel="manifest" href="data:application/manifest+json;base64,ewogICJuYW1lIjogIlZlbnR1cmVRdWFudCIsCiAgInNob3J0X25hbWUiOiAiVlEiLAogICJ0aGVtZV9jb2xvciI6ICIjMWEyYTZjIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMWEyYTZjIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAib3JpZW50YXRpb24iOiAicG9ydHJhaXQiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUI0Yld4dWN6MGlhSFIwY0RvdkwzZDNkeTUzTXk1dmNtY3ZNakF3TUM5emRtY2lJSFpwWlhkQ2IzZzlJakFnTUNBeE9EQWdNVGd3SWlCMmFXVjNRbTk0UFNJd0lEQWdNVGd3SURFNHdJajhLQ0E4WkdWbWN6NEtJQ0FnSUR4c2FXNWxZWEpIY21Ga2FXVnVkQ0JwWkQwaVozSmhaQ0lnZURFOUlqQWxJaUI1TVQwaU1DVWlJSGd5UFNJeE1EQWxJaUI1TWowaU1UQXdKU0k4Q2lBZ0lDQWdJQ0FBUER4emRHOXdJRzltWm5ObGREMGlNQ1VpSUhOMGVXeGxQU0p6ZEc5d0xXTnZiRzl5T2lNek5EazRaR0k3SUNJaUlDOCtDaUFnSUNBZ0lDQWdQSE4wYjNBZ2IyWm1jMlYwUFNJeE1EQWxJaUJ6ZEhsc1pUMGljM1J2Y0MxamIyeHZjam9qT1dJMU9XSTJPeUFpSWlBdlBnb2dJQ0FnUEM5c2FXNWxZWEpIY21Ga2FXVnVkRDRLSUNBOEwyUmxabk0rQ2lBZ1BISmxZM1FnZUQwaU1DSWdlVDBpTUNJZ2QybGtkR2c5SWpFNE1DSWdhR1ZwWjJoMFBTSXhPREFpSUhKNFBTSXpOaUlnY25rOUlqTTJJaUJtYVd4c1BTSjFjbXdvSTJkeVlXUXBJaUF2UGdvZ0lEeDBaWGgwSUhnOUlqa3dJaUI1UFNJeE1EWWlJR1p2Ym5RdFptRnRhV3g1UFNKQmNtbGhiQ3dnU0dWc2RtVjBhV05oTENCellXNXpMWE5sY21sbUlpQm1iMjUwTFhOcGVtVTlJamN3SWlCbWIyNTBMWGRsYVdkb2REMGlZbTlzWkNJZ1ptbHNiRDBpZDJocGRHVWlJSFJsZUhRdFlXNWphRzl5UFNKdGFXUmtiR1VpUGxaUVBDOTBaWGgwUGdvOEwzTjJaejRLIgogICAgfQogIF0KfQ==">
 </head>
 <body>
+    <!-- 在body开头添加这个隐藏的元素容器 -->
+    <div style="display: none;">
+        <span id="breakEvenResult"></span>
+        <span id="roiPeriodResult"></span>
+        <span id="monthlyRevenueRequiredResult"></span>
+        <span id="dailyRevenueRequiredResult"></span>
+    </div>
+    
     <div class="container">
-        <h1>创业财务预测计算器</h1>
+        <!-- 添加顶部品牌标识 -->
+        <div class="brand-header">
+            <div class="logo">VQ</div>
+            <h1>VentureQuant | 创投级财务决策系统</h1>
+        </div>
+
+        <!-- 添加粒子效果背景 -->
+        <div id="particles-js"></div>
         
         <div class="tabs">
             <div class="tab active" data-tab="basic">基本信息</div>
@@ -782,22 +1792,15 @@
                 
                 <div class="form-group">
                     <div class="input-container">
-                        <label for="rentCost">房屋年租金总费用（含物业费、水电等，元）：</label>
+                        <label for="rentCost">房屋年租金总费用（含物业、水电、停车费元/年）：</label>
                         <input type="number" id="rentCost" min="0" placeholder="例如：120000">
                     </div>
                 </div>
                 
                 <div class="form-group">
                     <div class="input-container">
-                        <label for="employeeCount">员工人数：</label>
-                        <input type="number" id="employeeCount" min="1" placeholder="例如：5">
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <div class="input-container">
-                        <label for="avgSalary">员工平均月工资（元/月）：</label>
-                        <input type="number" id="avgSalary" min="0" placeholder="例如：8000">
+                        <label for="totalSalaryCost">员工年工资总费用（元/年）：</label>
+                        <input type="number" id="totalSalaryCost" min="0" placeholder="例如：480000">
                     </div>
                 </div>
                 
@@ -805,6 +1808,20 @@
                     <div class="input-container">
                         <label for="avgOrderValue">平均客单价（元/单）：</label>
                         <input type="number" id="avgOrderValue" min="0" placeholder="例如：200">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-container">
+                        <label for="targetProfit">目标年净利润（元/年）：</label>
+                        <input type="number" id="targetProfit" min="0" placeholder="例如：500000">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <div class="input-container">
+                        <label for="estimatedMonthlyRevenue">预估月销售额（元/月）：</label>
+                        <input type="number" id="estimatedMonthlyRevenue" min="0" placeholder="例如：100000">
                     </div>
                 </div>
             </div>
@@ -838,6 +1855,46 @@
                     <input type="number" id="initialInvestment" min="0" placeholder="例如：500000">
                 </div>
             </div>
+            
+            <!-- 在高级选项标签页中添加折旧费用输入字段 -->
+            <div class="form-group">
+                <div class="input-container">
+                    <label for="depreciationCost">年折旧费用（元/年）：</label>
+                    <input type="number" id="depreciationCost" min="0" placeholder="设备、装修等年折旧额">
+                </div>
+            </div>
+            
+            <!-- 在高级选项标签页中添加销售费用输入字段 -->
+            <div class="form-group">
+                <div class="input-container">
+                    <label for="marketingCost">年销售费用（元/年）：</label>
+                    <input type="number" id="marketingCost" min="0" placeholder="广告、营销、销售人员佣金等">
+                </div>
+            </div>
+            
+            <!-- 在高级选项标签页中添加管理费用输入字段 -->
+            <div class="form-group">
+                <div class="input-container">
+                    <label for="administrativeCost">年管理费用（元/年）：</label>
+                    <input type="number" id="administrativeCost" min="0" placeholder="办公费、差旅费、会议费等">
+                </div>
+            </div>
+            
+            <!-- 在高级选项标签页中添加财务费用输入字段 -->
+            <div class="form-group">
+                <div class="input-container">
+                    <label for="financialCost">年财务费用（元/年）：</label>
+                    <input type="number" id="financialCost" min="0" placeholder="利息支出、手续费等">
+                </div>
+            </div>
+            
+            <!-- 在高级选项标签页中添加制造费用输入字段 -->
+            <div class="form-group">
+                <div class="input-container">
+                    <label for="manufacturingCost">年制造费用（元/年）：</label>
+                    <input type="number" id="manufacturingCost" min="0" placeholder="材料采购、加工费、设备维护等">
+                </div>
+            </div>
         </div>
         
         <button id="calculate">计算财务预测</button>
@@ -852,58 +1909,138 @@
         </div>
         
         <div class="results-table-container" id="results" style="display: none;">
-            <h2 class="results-title">财务预测结果</h2>
+            <!-- 更新结果页标题，匹配品牌风格 -->
+            <div class="results-header">
+                <h2>VentureQuant 决策分析报告</h2>
+            </div>
             <div class="results-grid">
                 <div class="results-card">
                     <h3>基本财务指标</h3>
                     <table class="results-table">
                         <tr>
-                            <td class="result-label">行业平均毛利率：</td>
+                            <td class="result-label">毛利率：</td>
                             <td class="result-value" id="grossMarginResult"></td>
                         </tr>
                         <tr>
-                            <td class="result-label">年固定成本总计：</td>
+                            <td class="result-label">总固定成本：</td>
                             <td class="result-value" id="totalFixedCostResult"></td>
                         </tr>
                         <tr>
-                            <td class="result-label">员工成本（含社保）：</td>
+                            <td class="result-label">总人力成本：</td>
                             <td class="result-value" id="totalLaborCostResult"></td>
                         </tr>
-                        <tr>
-                            <td class="result-label">盈亏平衡销售额：</td>
-                            <td class="result-value highlight" id="breakEvenResult"></td>
+                        <tr class="section-divider">
+                            <td colspan="2" style="padding-top: 15px; font-weight: bold; color: #3498db;">盈亏平衡详细分析</td>
                         </tr>
                         <tr>
-                            <td class="result-label">投资回收期预测：</td>
-                            <td class="result-value" id="roiPeriodResult"></td>
+                            <td class="result-label">盈亏平衡点销售额：</td>
+                            <td class="result-value" id="breakEvenDetailResult"></td>
+                        </tr>
+                        <tr>
+                            <td class="result-label">盈亏平衡点销售量：</td>
+                            <td class="result-value" id="breakEvenVolumeResult"></td>
+                        </tr>
+                        <tr>
+                            <td class="result-label">贡献毛益率：</td>
+                            <td class="result-value" id="contributionMarginRateResult"></td>
+                        </tr>
+                        <tr>
+                            <td class="result-label">每单位贡献毛益：</td>
+                            <td class="result-value" id="contributionMarginPerUnitResult"></td>
+                        </tr>
+                        <tr>
+                            <td class="result-label">固定成本覆盖倍数：</td>
+                            <td class="result-value" id="fixedCostCoverageRatioResult"></td>
                         </tr>
                     </table>
                 </div>
                 
-                <div class="results-card">
-                    <h3>运营目标指标</h3>
-                    <table class="results-table">
-                        <tr>
-                            <td class="result-label">月均销售额要求：</td>
-                            <td class="result-value" id="monthlyRevenueRequiredResult"></td>
-                        </tr>
-                        <tr>
-                            <td class="result-label">日均销售额要求：</td>
-                            <td class="result-value" id="dailyRevenueRequiredResult"></td>
-                        </tr>
-                        <tr id="yearlyCustomersContainer" style="display: none;">
-                            <td class="result-label">年均顾客量要求：</td>
-                            <td class="result-value" id="yearlyCustomersResult"></td>
-                        </tr>
-                        <tr id="monthlyCustomersContainer" style="display: none;">
-                            <td class="result-label">月均顾客量要求：</td>
-                            <td class="result-value" id="monthlyCustomersResult"></td>
-                        </tr>
-                        <tr id="dailyCustomersContainer" style="display: none;">
-                            <td class="result-label">日均顾客量要求：</td>
-                            <td class="result-value" id="dailyCustomersResult"></td>
-                        </tr>
-                    </table>
+                <div class="results-card" id="businessAnalysisCard" style="margin-top: 20px; width: 100%;">
+                    <h3>经营决策分析</h3>
+                    <div class="analysis-grid">
+                        <div class="analysis-section">
+                            <h4>目标实现分析</h4>
+                            <table class="results-table">
+                                <tr>
+                                    <td class="result-label">目标年净利润：</td>
+                                    <td class="result-value" id="targetProfitResult"></td>
+                                </tr>
+                                <tr>
+                                    <td class="result-label">目标利润下年销量需求：</td>
+                                    <td class="result-value" id="targetSalesVolumeResult"></td>
+                                </tr>
+                                <tr>
+                                    <td class="result-label">安全边际率：</td>
+                                    <td class="result-value" id="safetyMarginRateResult"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="analysis-section">
+                            <h4>成本结构分析</h4>
+                            <table class="results-table">
+                                <tr>
+                                    <td class="result-label">人工成本率：</td>
+                                    <td class="result-value" id="laborCostRateResult"></td>
+                                </tr>
+                                <tr>
+                                    <td class="result-label">房租占比：</td>
+                                    <td class="result-value" id="rentCostRateResult"></td>
+                                </tr>
+                                <tr>
+                                    <td class="result-label">其他固定成本占比：</td>
+                                    <td class="result-value" id="otherCostsRateResult"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- 在目标实现分析部分添加安全边际分析 -->
+                        <div class="analysis-section">
+                            <h4>安全边际分析</h4>
+                            <table class="results-table">
+                                <tr>
+                                    <td class="result-label">安全边际量：</td>
+                                    <td class="result-value" id="safetyMarginVolumeResult"></td>
+                                </tr>
+                                <tr>
+                                    <td class="result-label">安全边际额：</td>
+                                    <td class="result-value" id="safetyMarginAmountResult"></td>
+                                </tr>
+                                <tr>
+                                    <td class="result-label">安全边际率：</td>
+                                    <td class="result-value" id="safetyMarginRateResultWithLevel"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="safety-level-container" id="safetyLevelContainer">
+                                        <div class="safety-level-indicator">
+                                            <div class="safety-bar"></div>
+                                            <div class="safety-pointer"></div>
+                                        </div>
+                                        <div class="safety-level-text" id="safetyLevelText"></div>
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <!-- 在成本结构分析部分后添加现金流分析 -->
+                        <div class="analysis-section">
+                            <h4>现金流分析</h4>
+                            <table class="results-table">
+                                <tr>
+                                    <td class="result-label">年经营性现金流：</td>
+                                    <td class="result-value" id="operatingCashFlowResult"></td>
+                                </tr>
+                                <tr>
+                                    <td class="result-label">销售现金流比率：</td>
+                                    <td class="result-value" id="cashFlowRatioResult"></td>
+                                </tr>
+                                <tr>
+                                    <td class="result-label">现金流状况：</td>
+                                    <td class="result-value" id="cashFlowStatusResult"></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="chart-container" style="height: 250px; margin-top: 20px;">
+                        <canvas id="costStructureChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1034,8 +2171,7 @@
             }
             
             const rentCost = parseFloat(document.getElementById('rentCost').value) || 0;
-            const employeeCount = parseInt(document.getElementById('employeeCount').value) || 0;
-            const avgSalary = parseFloat(document.getElementById('avgSalary').value) || 0;
+            const totalSalaryCost = parseFloat(document.getElementById('totalSalaryCost').value) || 0;
             const otherFixedCosts = parseFloat(document.getElementById('otherFixedCosts').value) || 0;
             const socialInsuranceRate = parseFloat(document.getElementById('socialInsuranceRate').value) || 30;
             const taxRate = parseFloat(document.getElementById('taxRate').value) || 25;
@@ -1044,8 +2180,7 @@
             
             console.log("输入参数:", {
                 rentCost,
-                employeeCount,
-                avgSalary,
+                totalSalaryCost,
                 otherFixedCosts,
                 socialInsuranceRate,
                 taxRate,
@@ -1054,21 +2189,22 @@
             });
             
             // 基本验证
-            if (rentCost <= 0 || employeeCount <= 0 || avgSalary <= 0) {
-                alert('请填写必要的信息（租金、员工数量和平均工资）');
+            if (rentCost <= 0 || totalSalaryCost <= 0) {
+                alert('请填写必要的信息（租金和员工工资总费用）');
                 return;
             }
             
             try {
                 // 计算
-                const annualSalaryPerEmployee = avgSalary * 12;
-                const socialInsuranceCostPerEmployee = annualSalaryPerEmployee * (socialInsuranceRate / 100);
-                const totalLaborCost = (annualSalaryPerEmployee + socialInsuranceCostPerEmployee) * employeeCount;
-                const totalFixedCost = rentCost + totalLaborCost + otherFixedCosts;
+                const socialInsuranceCost = totalSalaryCost * (socialInsuranceRate / 100);
+                const totalLaborCost = totalSalaryCost + socialInsuranceCost;
+                const marketingCost = parseFloat(document.getElementById('marketingCost').value) || 0;
+                const administrativeCost = parseFloat(document.getElementById('administrativeCost').value) || 0;
+                const financialCost = parseFloat(document.getElementById('financialCost').value) || 0;
+                const manufacturingCost = parseFloat(document.getElementById('manufacturingCost').value) || 0;
+                const totalFixedCost = totalLaborCost + rentCost + otherFixedCosts + marketingCost + administrativeCost + financialCost + manufacturingCost;
                 
                 console.log("计算结果:", {
-                    annualSalaryPerEmployee,
-                    socialInsuranceCostPerEmployee,
                     totalLaborCost,
                     totalFixedCost
                 });
@@ -1110,31 +2246,6 @@
                 }
                 document.getElementById('roiPeriodResult').textContent = roiPeriodText;
                 
-                // 计算并显示客户量
-                const yearlyCustomersContainer = document.getElementById('yearlyCustomersContainer');
-                const monthlyCustomersContainer = document.getElementById('monthlyCustomersContainer');
-                const dailyCustomersContainer = document.getElementById('dailyCustomersContainer');
-
-                if (avgOrderValue > 0) {
-                    const yearlyCustomers = Math.ceil(breakEvenRevenue / avgOrderValue);
-                    const monthlyCustomers = Math.ceil(yearlyCustomers / 12);
-                    const dailyCustomers = Math.ceil(yearlyCustomers / 365);
-                    
-                    document.getElementById('yearlyCustomersResult').textContent = yearlyCustomers.toLocaleString('zh-CN') + ' 人次/年';
-                    document.getElementById('monthlyCustomersResult').textContent = monthlyCustomers.toLocaleString('zh-CN') + ' 人次/月';
-                    document.getElementById('dailyCustomersResult').textContent = dailyCustomers.toLocaleString('zh-CN') + ' 人次/日';
-                    
-                    document.getElementById('yearlyCustomersContainer').style.display = 'table-row';
-                    document.getElementById('monthlyCustomersContainer').style.display = 'table-row';
-                    document.getElementById('dailyCustomersContainer').style.display = 'table-row';
-                    
-                    console.log('显示顾客量数据', yearlyCustomers, monthlyCustomers, dailyCustomers);
-                } else {
-                    document.getElementById('yearlyCustomersContainer').style.display = 'none';
-                    document.getElementById('monthlyCustomersContainer').style.display = 'none';
-                    document.getElementById('dailyCustomersContainer').style.display = 'none';
-                }
-                
                 // 生成销售额与利润预测表
                 generateProfitTable(breakEvenRevenue, grossMargin, totalFixedCost, taxRate, avgOrderValue);
                 
@@ -1156,6 +2267,277 @@
                     resultsDiv.classList.add('visible');
                 }, 50);
                 console.log("计算完成，结果已显示");
+
+                // 在计算完成部分添加以下代码:
+
+                // 目标利润下的销量需求计算
+                const targetProfit = parseFloat(document.getElementById('targetProfit').value) || 0;
+                const estimatedMonthlyRevenue = parseFloat(document.getElementById('estimatedMonthlyRevenue').value) || 0;
+                const estimatedYearlyRevenue = estimatedMonthlyRevenue * 12;
+
+                let targetSalesVolume = 0;
+                if (avgOrderValue > 0 && grossMargin > 0) {
+                    targetSalesVolume = Math.ceil((totalFixedCost + targetProfit) / (avgOrderValue * (grossMargin / 100)));
+                }
+
+                // 安全边际率计算
+                let safetyMarginRate = 0;
+                let breakEvenSalesVolume = 0;
+                if (avgOrderValue > 0) {
+                    breakEvenSalesVolume = Math.ceil(breakEvenRevenue / avgOrderValue);
+                    
+                    if (estimatedMonthlyRevenue > 0) {
+                        const estimatedYearlySalesVolume = Math.ceil(estimatedYearlyRevenue / avgOrderValue);
+                        safetyMarginRate = ((estimatedYearlySalesVolume - breakEvenSalesVolume) / estimatedYearlySalesVolume) * 100;
+                    }
+                }
+
+                // 成本结构占比计算
+                const laborCostRate = estimatedYearlyRevenue > 0 ? (totalLaborCost / estimatedYearlyRevenue) * 100 : 0;
+                const rentCostRate = estimatedYearlyRevenue > 0 ? (rentCost / estimatedYearlyRevenue) * 100 : 0;
+                const otherCostsRate = estimatedYearlyRevenue > 0 ? (otherFixedCosts / estimatedYearlyRevenue) * 100 : 0;
+
+                // 显示新指标
+                document.getElementById('targetProfitResult').textContent = formatCurrency(targetProfit) + '元/年';
+                document.getElementById('targetSalesVolumeResult').textContent = targetSalesVolume > 0 ? targetSalesVolume.toLocaleString('zh-CN') + ' 单/年' : '请设置客单价';
+                document.getElementById('safetyMarginRateResult').textContent = estimatedMonthlyRevenue > 0 ? safetyMarginRate.toFixed(1) + '%' : '请输入预估月销售额';
+                document.getElementById('laborCostRateResult').textContent = estimatedYearlyRevenue > 0 ? laborCostRate.toFixed(1) + '%' : '请输入预估月销售额';
+                document.getElementById('rentCostRateResult').textContent = estimatedYearlyRevenue > 0 ? rentCostRate.toFixed(1) + '%' : '请输入预估月销售额';
+                document.getElementById('otherCostsRateResult').textContent = estimatedYearlyRevenue > 0 ? otherCostsRate.toFixed(1) + '%' : '请输入预估月销售额';
+
+                // 绘制成本结构饼图
+                if (estimatedYearlyRevenue > 0) {
+                    drawCostStructureChart(totalLaborCost, rentCost, otherFixedCosts, marketingCost, administrativeCost, financialCost, manufacturingCost);
+                }
+
+                // 增加计算安全边际量和安全边际额
+                let safetyMarginVolume = 0;
+                let safetyMarginAmount = 0;
+
+                if (estimatedMonthlyRevenue > 0 && avgOrderValue > 0) {
+                    // 安全边际量 = 预计年销量 - 盈亏平衡销量
+                    const estimatedYearlySalesVolume = Math.ceil(estimatedYearlyRevenue / avgOrderValue);
+                    safetyMarginVolume = estimatedYearlySalesVolume - breakEvenSalesVolume;
+                    
+                    // 安全边际额 = 预计年销售额 - 盈亏平衡销售额
+                    safetyMarginAmount = estimatedYearlyRevenue - breakEvenRevenue;
+                }
+
+                // 设置安全边际风险级别的函数
+                function getSafetyLevel(safetyMarginRate) {
+                    if (safetyMarginRate < 10) {
+                        return {
+                            level: "危险", 
+                            class: "danger-level", 
+                            description: "经营风险极高，需要立即采取措施增加销售或降低成本"
+                        };
+                    } else if (safetyMarginRate < 20) {
+                        return {
+                            level: "要注意", 
+                            class: "warning-level", 
+                            description: "经营风险较高，需密切关注销售状况，控制成本"
+                        };
+                    } else if (safetyMarginRate < 30) {
+                        return {
+                            level: "较安全", 
+                            class: "caution-level", 
+                            description: "经营状况尚可，但仍有改善空间"
+                        };
+                    } else if (safetyMarginRate < 40) {
+                        return {
+                            level: "安全", 
+                            class: "safe-level", 
+                            description: "经营状况良好，具有较强的抵御风险能力"
+                        };
+                    } else {
+                        return {
+                            level: "很安全", 
+                            class: "very-safe-level", 
+                            description: "经营状况优秀，具有极强的抵御风险能力"
+                        };
+                    }
+                }
+
+                // 在显示安全边际率代码附近添加以下代码
+
+                // 显示安全边际分析结果
+                document.getElementById('safetyMarginVolumeResult').textContent = 
+                    estimatedMonthlyRevenue > 0 ? safetyMarginVolume.toLocaleString('zh-CN') + ' 单/年' : '请输入预估月销售额';
+                document.getElementById('safetyMarginAmountResult').textContent = 
+                    estimatedMonthlyRevenue > 0 ? formatCurrency(safetyMarginAmount) + ' 元/年' : '请输入预估月销售额';
+
+                // 安全边际率的风险评级显示
+                if (estimatedMonthlyRevenue > 0) {
+                    const safetyLevel = getSafetyLevel(safetyMarginRate);
+                    
+                    // 显示带有风险级别的安全边际率
+                    document.getElementById('safetyMarginRateResultWithLevel').innerHTML = 
+                        `<span style="color:${safetyMarginRate < 0 ? '#e74c3c' : 'inherit'}">${safetyMarginRate.toFixed(1)}%</span>`;
+                    
+                    // 显示安全级别指示器
+                    const pointerPosition = Math.min(Math.max(safetyMarginRate, 0), 50) * 2; // 0-50% 映射到 0-100%位置
+                    document.querySelector('.safety-pointer').style.left = `${pointerPosition}%`;
+                    
+                    // 显示安全级别文本
+                    const safetyLevelText = document.getElementById('safetyLevelText');
+                    safetyLevelText.textContent = `${safetyLevel.level}：${safetyLevel.description}`;
+                    
+                    // 移除旧的类名
+                    safetyLevelText.classList.remove('danger-level', 'warning-level', 'caution-level', 'safe-level', 'very-safe-level');
+                    
+                    // 添加新的类名
+                    safetyLevelText.classList.add(safetyLevel.class);
+                    
+                    // 显示安全级别容器
+                    document.getElementById('safetyLevelContainer').style.display = 'table-cell';
+                } else {
+                    document.getElementById('safetyLevelContainer').style.display = 'none';
+                }
+
+                // 在计算函数中添加经营性现金流计算
+                // 在成本结构占比计算部分后添加
+
+                // 经营性现金流计算
+                let operatingCashFlow = 0;
+                let cashFlowRatio = 0;
+
+                if (estimatedYearlyRevenue > 0) {
+                    // 计算息税前利润 (EBIT)
+                    const variableCost = estimatedYearlyRevenue * (1 - grossMargin / 100);
+                    const ebit = estimatedYearlyRevenue - variableCost - totalFixedCost;
+                    
+                    // 获取折旧费用
+                    const depreciationCost = parseFloat(document.getElementById('depreciationCost').value) || 0;
+                    
+                    // 计算所得税
+                    const incomeTax = Math.max(0, ebit) * (taxRate / 100);
+                    
+                    // 经营性现金流 = EBIT + 折旧 - 所得税
+                    operatingCashFlow = ebit + depreciationCost - incomeTax;
+                    
+                    // 现金流比率(现金流/销售额)
+                    cashFlowRatio = (operatingCashFlow / estimatedYearlyRevenue) * 100;
+                }
+
+                // 在其他结果显示代码后添加现金流结果显示
+
+                // 显示经营性现金流结果
+                if (estimatedYearlyRevenue > 0) {
+                    document.getElementById('operatingCashFlowResult').textContent = 
+                        `${formatCurrency(operatingCashFlow)} 元/年`;
+                    document.getElementById('cashFlowRatioResult').textContent = 
+                        `${cashFlowRatio.toFixed(1)}%`;
+                    
+                    // 评估现金流状况
+                    let cashFlowStatus = '';
+                    let statusColor = '';
+                    
+                    if (operatingCashFlow < 0) {
+                        cashFlowStatus = '现金流为负，经营存在严重风险';
+                        statusColor = '#e74c3c';
+                    } else if (cashFlowRatio < 5) {
+                        cashFlowStatus = '现金流较弱，需注意资金链风险';
+                        statusColor = '#f39c12';
+                    } else if (cashFlowRatio < 10) {
+                        cashFlowStatus = '现金流一般，可维持基本运营';
+                        statusColor = '#f1c40f';
+                    } else if (cashFlowRatio < 15) {
+                        cashFlowStatus = '现金流良好，经营稳健';
+                        statusColor = '#2ecc71';
+                    } else {
+                        cashFlowStatus = '现金流充裕，可考虑扩大投资';
+                        statusColor = '#27ae60';
+                    }
+                    
+                    document.getElementById('cashFlowStatusResult').innerHTML = 
+                        `<span style="color:${statusColor}; font-weight:bold;">${cashFlowStatus}</span>`;
+                } else {
+                    document.getElementById('operatingCashFlowResult').textContent = '请输入预估月销售额';
+                    document.getElementById('cashFlowRatioResult').textContent = '请输入预估月销售额';
+                    document.getElementById('cashFlowStatusResult').textContent = '-';
+                }
+
+                // 在计算函数中增加盈亏平衡相关指标计算
+                // 在已有的盈亏平衡计算后添加
+
+                // 计算单位贡献毛益和贡献毛益率
+                let contributionMarginPerUnit = 0;
+                let contributionMarginRate = 0;
+                let fixedCostCoverageRatio = 0;
+
+                if (avgOrderValue > 0) {
+                    // 单位贡献毛益 = 客单价 × 毛利率
+                    contributionMarginPerUnit = avgOrderValue * (grossMargin / 100);
+                    
+                    // 贡献毛益率 = 贡献毛益 / 客单价 × 100%
+                    contributionMarginRate = (contributionMarginPerUnit / avgOrderValue) * 100;
+                    
+                    // 固定成本覆盖倍数 (估计销售额情况下)
+                    if (estimatedYearlyRevenue > 0) {
+                        const totalContributionMargin = estimatedYearlyRevenue * (contributionMarginRate / 100);
+                        fixedCostCoverageRatio = totalContributionMargin / totalFixedCost;
+                    }
+                }
+
+                // 在显示结果部分添加
+                // 显示详细盈亏平衡分析结果
+                document.getElementById('breakEvenDetailResult').textContent = 
+                    formatCurrency(breakEvenRevenue) + ' 元/年';
+
+                document.getElementById('breakEvenVolumeResult').textContent = 
+                    avgOrderValue > 0 ? Math.ceil(breakEvenRevenue / avgOrderValue).toLocaleString('zh-CN') + ' 单/年' : '请设置客单价';
+
+                document.getElementById('contributionMarginRateResult').textContent = 
+                    avgOrderValue > 0 ? contributionMarginRate.toFixed(1) + '%' : '请设置客单价';
+
+                document.getElementById('contributionMarginPerUnitResult').textContent = 
+                    avgOrderValue > 0 ? formatCurrency(contributionMarginPerUnit) + ' 元/单' : '请设置客单价';
+
+                document.getElementById('fixedCostCoverageRatioResult').textContent = 
+                    estimatedYearlyRevenue > 0 && avgOrderValue > 0 ? 
+                    fixedCostCoverageRatio.toFixed(2) + ' 倍' + 
+                    (fixedCostCoverageRatio < 1 ? ' (警告：固定成本无法完全覆盖)' : '') : 
+                    '请输入预估月销售额';
+
+                // 在计算函数中添加代码以保持兼容性
+                // 在计算完成后添加:
+
+                // 保持向后兼容，同时设置breakEvenResult
+                if (document.getElementById('breakEvenResult')) {
+                    document.getElementById('breakEvenResult').textContent = formatCurrency(breakEvenRevenue) + ' 元/年';
+                }
+
+                // 同步breakEvenDetailResult和breakEvenResult
+                document.getElementById('breakEvenDetailResult').textContent = formatCurrency(breakEvenRevenue) + ' 元/年';
+
+                // 计算投资回收期
+                let roiPeriod = 0;
+                if (estimatedYearlyRevenue > 0 && initialInvestment > 0) {
+                    // 预计年净利润
+                    const variableCost = estimatedYearlyRevenue * (1 - grossMargin / 100);
+                    const yearlyOperatingProfit = estimatedYearlyRevenue - variableCost - totalFixedCost;
+                    const yearlyNetProfit = yearlyOperatingProfit * (1 - taxRate / 100);
+                    
+                    // 投资回收期 = 初始投资 / 年净利润
+                    roiPeriod = yearlyNetProfit > 0 ? initialInvestment / yearlyNetProfit : 0;
+                    
+                    // 保持向后兼容
+                    if (document.getElementById('roiPeriodResult')) {
+                        document.getElementById('roiPeriodResult').textContent = 
+                            roiPeriod > 0 ? roiPeriod.toFixed(1) + ' 年' : '无法估计';
+                    }
+                }
+
+                // 设置其他需要保持兼容的结果
+                if (document.getElementById('monthlyRevenueRequiredResult')) {
+                    document.getElementById('monthlyRevenueRequiredResult').textContent = 
+                        formatCurrency(breakEvenRevenue / 12) + ' 元/月';
+                }
+
+                if (document.getElementById('dailyRevenueRequiredResult')) {
+                    document.getElementById('dailyRevenueRequiredResult').textContent = 
+                        formatCurrency(breakEvenRevenue / 365) + ' 元/天';
+                }
             } catch (error) {
                 console.error("计算过程中出错:", error);
                 alert("计算过程中出错: " + error.message);
@@ -1406,26 +2788,64 @@
             }
         });
 
-        // 修改绘制盈亏平衡图表函数 - 添加对profitChart的引用
-        function drawBreakEvenChart(revenuePoints, fixedCostPoints, totalCostPoints, breakEvenPoint) {
+        // 修复绘制盈亏平衡图表函数
+        function drawBreakEvenChart(breakEvenRevenue, grossMargin, totalFixedCost) {
             try {
                 const ctx = document.getElementById('breakEvenChart').getContext('2d');
                 
                 // 如果已经有实例，先销毁
-                    if (window.breakEvenChartInstance) {
-                        window.breakEvenChartInstance.destroy();
-                    }
-                    
+                if (window.breakEvenChartInstance) {
+                    window.breakEvenChartInstance.destroy();
+                }
+                
+                // 生成数据点
+                const maxRevenue = breakEvenRevenue * 2;
+                const revenuePoints = [];
+                const fixedCostPoints = [];
+                const totalCostPoints = [];
+                
+                // 生成20个数据点
+                for (let i = 0; i <= 20; i++) {
+                    const revenue = maxRevenue * (i / 20);
+                    revenuePoints.push(revenue);
+                    fixedCostPoints.push(totalFixedCost);
+                    totalCostPoints.push(totalFixedCost + revenue * (1 - grossMargin / 100));
+                }
+                
                 // 设置标题
                 const chartOptions = {...chartResponsiveOptions};
                 chartOptions.plugins.title.text = '盈亏平衡分析';
-                    
-                    window.breakEvenChartInstance = new Chart(ctx, {
-                        type: 'line',
-                        data: {
+                
+                // 创建图表
+                window.breakEvenChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
                         labels: revenuePoints.map(p => formatCurrency(p) + '元'),
-                            datasets: [
-                            // 保持其余数据集不变
+                        datasets: [
+                            {
+                                label: '销售收入',
+                                data: revenuePoints,
+                                borderColor: 'rgba(52, 152, 219, 1)',
+                                backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                                borderWidth: 3,
+                                fill: false
+                            },
+                            {
+                                label: '固定成本',
+                                data: fixedCostPoints,
+                                borderColor: 'rgba(231, 76, 60, 1)',
+                                backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                                borderWidth: 3,
+                                fill: false
+                            },
+                            {
+                                label: '总成本',
+                                data: totalCostPoints,
+                                borderColor: 'rgba(241, 196, 15, 1)',
+                                backgroundColor: 'rgba(241, 196, 15, 0.1)',
+                                borderWidth: 3,
+                                fill: false
+                            }
                         ]
                     },
                     options: chartOptions
@@ -1435,26 +2855,86 @@
             }
         }
         
-        // 同样修改drawProfitChart，保存对图表实例的引用
-        function drawProfitChart(revenuePoints, grossProfitPoints, operatingProfitPoints, netProfitPoints) {
+        // 修复绘制利润预测图表函数
+        function drawProfitChart(breakEvenRevenue, grossMargin, totalFixedCost, taxRate) {
             try {
                 const ctx = document.getElementById('profitChart').getContext('2d');
                 
                 // 如果已经有实例，先销毁
-                    if (window.profitChartInstance) {
-                        window.profitChartInstance.destroy();
-                    }
+                if (window.profitChartInstance) {
+                    window.profitChartInstance.destroy();
+                }
+                
+                // 生成数据点
+                const maxRevenue = breakEvenRevenue * 2;
+                const revenuePoints = [];
+                const grossProfitPoints = [];
+                const operatingProfitPoints = [];
+                const netProfitPoints = [];
+                
+                // 找出利润开始为正的点
+                let profitStartIndex = 0;
+                
+                // 生成20个数据点
+                for (let i = 0; i <= 20; i++) {
+                    const revenue = maxRevenue * (i / 20);
+                    const grossProfit = revenue * (grossMargin / 100);
+                    const operatingProfit = grossProfit - totalFixedCost;
+                    const netProfit = operatingProfit * (1 - taxRate / 100);
                     
+                    revenuePoints.push(revenue);
+                    grossProfitPoints.push(grossProfit);
+                    operatingProfitPoints.push(operatingProfit);
+                    netProfitPoints.push(netProfit);
+                    
+                    // 找到第一个净利润为正的点
+                    if (netProfit > 0 && profitStartIndex === 0) {
+                        profitStartIndex = i;
+                    }
+                }
+                
                 // 设置标题
                 const chartOptions = {...chartResponsiveOptions};
                 chartOptions.plugins.title.text = '利润预测分析';
-                    
-                    window.profitChartInstance = new Chart(ctx, {
-                        type: 'line',
-                        data: {
+                
+                // 创建图表
+                window.profitChartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
                         labels: revenuePoints.map(p => formatCurrency(p) + '元'),
-                            datasets: [
-                            // 保持其余数据集不变 
+                        datasets: [
+                            {
+                                label: '毛利润',
+                                data: grossProfitPoints,
+                                borderColor: 'rgba(52, 152, 219, 1)',
+                                backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                                borderWidth: 3,
+                                fill: false
+                            },
+                            {
+                                label: '营业利润',
+                                data: operatingProfitPoints,
+                                borderColor: 'rgba(155, 89, 182, 1)',
+                                backgroundColor: 'rgba(155, 89, 182, 0.1)',
+                                borderWidth: 3,
+                                fill: false
+                            },
+                            {
+                                label: '净利润',
+                                data: netProfitPoints,
+                                borderColor: 'rgba(46, 204, 113, 1)',
+                                backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                                borderWidth: 3,
+                                fill: true,
+                                pointRadius: function(context) {
+                                    const index = context.dataIndex;
+                                    return index === profitStartIndex ? 8 : 3;
+                                },
+                                pointBackgroundColor: function(context) {
+                                    const index = context.dataIndex;
+                                    return index === profitStartIndex ? 'rgba(241, 196, 15, 1)' : 'rgba(46, 204, 113, 1)';
+                                }
+                            }
                         ]
                     },
                     options: chartOptions
@@ -1478,9 +2958,7 @@
                     industry: document.getElementById('industry').value,
                     customMargin: document.getElementById('customMargin').value,
                     rentCost: document.getElementById('rentCost').value,
-                    employeeCount: document.getElementById('employeeCount').value,
-                    avgSalary: document.getElementById('avgSalary').value,
-                    avgOrderValue: document.getElementById('avgOrderValue').value,
+                    totalSalaryCost: document.getElementById('totalSalaryCost').value,
                     otherFixedCosts: document.getElementById('otherFixedCosts').value,
                     socialInsuranceRate: document.getElementById('socialInsuranceRate').value,
                     taxRate: document.getElementById('taxRate').value,
@@ -1540,8 +3018,7 @@
                             <div>
                                 <p><strong>行业:</strong> ${getIndustryName(item.inputs.industry)}</p>
                                 <p><strong>年租金:</strong> ${item.inputs.rentCost} 元</p>
-                                <p><strong>员工人数:</strong> ${item.inputs.employeeCount} 人</p>
-                                <p><strong>平均月薪:</strong> ${item.inputs.avgSalary} 元</p>
+                                <p><strong>员工年工资总费用:</strong> ${item.inputs.totalSalaryCost} 元</p>
                             </div>
                             <div>
                                 <p><strong>盈亏平衡销售额:</strong> ${item.results.breakEven}</p>
@@ -1600,9 +3077,7 @@
             }
             
             document.getElementById('rentCost').value = record.inputs.rentCost;
-            document.getElementById('employeeCount').value = record.inputs.employeeCount;
-            document.getElementById('avgSalary').value = record.inputs.avgSalary;
-            document.getElementById('avgOrderValue').value = record.inputs.avgOrderValue;
+            document.getElementById('totalSalaryCost').value = record.inputs.totalSalaryCost;
             document.getElementById('otherFixedCosts').value = record.inputs.otherFixedCosts;
             document.getElementById('socialInsuranceRate').value = record.inputs.socialInsuranceRate;
             document.getElementById('taxRate').value = record.inputs.taxRate;
@@ -1668,6 +3143,398 @@
                 let prevTab = activeTab.previousElementSibling;
                 if (prevTab && prevTab.classList.contains('tab')) {
                     prevTab.click();
+                }
+            }
+        }
+
+        // 修改成本结构饼图函数以包含制造费用
+        function drawCostStructureChart(laborCost, rentCost, otherCosts, marketingCost, administrativeCost, financialCost, manufacturingCost) {
+            try {
+                const ctx = document.getElementById('costStructureChart').getContext('2d');
+                
+                // 如果已经有实例，先销毁
+                if (window.costStructureChartInstance) {
+                    window.costStructureChartInstance.destroy();
+                }
+                
+                const totalCost = laborCost + rentCost + otherCosts + marketingCost + administrativeCost + financialCost + manufacturingCost;
+                
+                // 计算每项成本的百分比
+                const getPercentage = (value) => {
+                    return totalCost > 0 ? Math.round((value / totalCost) * 100) : 0;
+                };
+                
+                // 为长文本添加换行符
+                const wrapLabel = (label) => {
+                    // 如果文本长度超过6个字符，在适当位置添加换行符
+                    if (label.length > 6) {
+                        return label.slice(0, 6) + '\n' + label.slice(6);
+                    }
+                    return label;
+                };
+                
+                window.costStructureChartInstance = new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                        labels: ['人工成本', '房租成本', '其他固定\n成本', '销售费用', '管理费用', '财务费用', '制造费用'],
+                        datasets: [{
+                            data: [laborCost, rentCost, otherCosts, marketingCost, administrativeCost, financialCost, manufacturingCost],
+                            backgroundColor: [
+                                'rgba(52, 152, 219, 0.7)',  // 蓝色
+                                'rgba(231, 76, 60, 0.7)',   // 红色
+                                'rgba(241, 196, 15, 0.7)',  // 黄色
+                                'rgba(155, 89, 182, 0.7)',  // 紫色
+                                'rgba(39, 174, 96, 0.7)',   // 绿色
+                                'rgba(230, 126, 34, 0.7)',  // 橙色
+                                'rgba(41, 128, 185, 0.7)'   // 深蓝色
+                            ],
+                            borderColor: [
+                                'rgba(52, 152, 219, 1)',
+                                'rgba(231, 76, 60, 1)',
+                                'rgba(241, 196, 15, 1)',
+                                'rgba(155, 89, 182, 1)',
+                                'rgba(39, 174, 96, 1)',
+                                'rgba(230, 126, 34, 1)',
+                                'rgba(41, 128, 185, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.raw;
+                                        const percentage = getPercentage(value);
+                                        return `${label}: ${formatCurrency(value)}元 (${percentage}%)`;
+                                    }
+                                }
+                            },
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    padding: 15,
+                                    font: {
+                                        size: window.innerWidth < 480 ? 11 : 14
+                                    },
+                                    // 启用文字换行
+                                    boxWidth: 15,
+                                    boxHeight: 15,
+                                    color: '#333',
+                                    usePointStyle: true,
+                                    pointStyle: 'circle',
+                                    // 设置最大宽度强制换行
+                                    textAlign: 'left',
+                                    generateLabels: function(chart) {
+                                        const datasets = chart.data.datasets;
+                                        return chart.data.labels.map((label, i) => {
+                                            const meta = chart.getDatasetMeta(0);
+                                            const value = datasets[0].data[i];
+                                            const percentage = getPercentage(value);
+                                            
+                                            // 为长标签手动添加换行符
+                                            const wrappedLabel = label.includes('\n') ? label : wrapLabel(label);
+                                            
+                                            return {
+                                                text: `${wrappedLabel} (${percentage}%)`,
+                                                fillStyle: datasets[0].backgroundColor[i],
+                                                strokeStyle: datasets[0].borderColor[i],
+                                                lineWidth: 1,
+                                                hidden: isNaN(value) || meta.data[i].hidden,
+                                                index: i
+                                            };
+                                        });
+                                    }
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: '成本结构分析',
+                                font: {
+                                    size: 18,
+                                    weight: 'bold'
+                                },
+                                color: '#3498db'
+                            }
+                        }
+                    }
+                });
+            } catch (error) {
+                console.error('绘制成本结构图表时出错:', error);
+            }
+        }
+
+        // 添加粒子效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 动态加载粒子效果库
+            const script = document.createElement('script');
+            script.src = 'https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js';
+            script.onload = function() {
+                particlesJS('particles-js', {
+                    "particles": {
+                        "number": {
+                            "value": 80,
+                            "density": {
+                                "enable": true,
+                                "value_area": 800
+                            }
+                        },
+                        "color": {
+                            "value": "#ffffff"
+                        },
+                        "shape": {
+                            "type": "circle",
+                            "stroke": {
+                                "width": 0,
+                                "color": "#000000"
+                            },
+                            "polygon": {
+                                "nb_sides": 5
+                            }
+                        },
+                        "opacity": {
+                            "value": 0.3,
+                            "random": false,
+                            "anim": {
+                                "enable": false,
+                                "speed": 1,
+                                "opacity_min": 0.1,
+                                "sync": false
+                            }
+                        },
+                        "size": {
+                            "value": 3,
+                            "random": true,
+                            "anim": {
+                                "enable": false,
+                                "speed": 40,
+                                "size_min": 0.1,
+                                "sync": false
+                            }
+                        },
+                        "line_linked": {
+                            "enable": true,
+                            "distance": 150,
+                            "color": "#ffffff",
+                            "opacity": 0.2,
+                            "width": 1
+                        },
+                        "move": {
+                            "enable": true,
+                            "speed": 2,
+                            "direction": "none",
+                            "random": false,
+                            "straight": false,
+                            "out_mode": "out",
+                            "bounce": false,
+                            "attract": {
+                                "enable": false,
+                                "rotateX": 600,
+                                "rotateY": 1200
+                            }
+                        }
+                    },
+                    "interactivity": {
+                        "detect_on": "canvas",
+                        "events": {
+                            "onhover": {
+                                "enable": true,
+                                "mode": "grab"
+                            },
+                            "onclick": {
+                                "enable": true,
+                                "mode": "push"
+                            },
+                            "resize": true
+                        },
+                        "modes": {
+                            "grab": {
+                                "distance": 140,
+                                "line_linked": {
+                                    "opacity": 0.5
+                                }
+                            },
+                            "bubble": {
+                                "distance": 400,
+                                "size": 40,
+                                "duration": 2,
+                                "opacity": 8,
+                                "speed": 3
+                            },
+                            "repulse": {
+                                "distance": 200,
+                                "duration": 0.4
+                            },
+                            "push": {
+                                "particles_nb": 4
+                            },
+                            "remove": {
+                                "particles_nb": 2
+                            }
+                        }
+                    },
+                    "retina_detect": true
+                });
+            };
+            document.head.appendChild(script);
+
+            // 添加动态卡片效果
+            const resultCards = document.querySelectorAll('.results-card');
+            resultCards.forEach((card, index) => {
+                card.style.animation = `fadeIn 0.5s ease-out ${0.1 * index}s forwards`;
+                card.style.opacity = '0';
+            });
+        });
+
+        // 为按钮添加点击时的涟漪效果
+        document.addEventListener('click', function(e) {
+            if (e.target.tagName === 'BUTTON') {
+                const button = e.target;
+                
+                // 创建涟漪元素
+                const ripple = document.createElement('span');
+                ripple.classList.add('ripple');
+                button.appendChild(ripple);
+                
+                // 设置涟漪位置
+                const rect = button.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                ripple.style.width = ripple.style.height = size + 'px';
+                ripple.style.left = e.clientX - rect.left - size/2 + 'px';
+                ripple.style.top = e.clientY - rect.top - size/2 + 'px';
+                
+                // 动画结束后移除元素
+                ripple.addEventListener('animationend', function() {
+                    ripple.remove();
+                });
+            }
+        });
+
+        // 在显示结果时替换标题
+        let resultsElement = document.getElementById('results');
+        let resultsTitle = resultsElement.querySelector('h2') || document.createElement('h2');
+
+        if (!resultsElement.querySelector('h2')) {
+            resultsTitle.className = 'results-title';
+            resultsTitle.textContent = 'VentureQuant 决策分析报告';
+            resultsElement.insertBefore(resultsTitle, resultsElement.firstChild);
+        } else {
+            resultsTitle.className = 'results-title';
+            resultsTitle.textContent = 'VentureQuant 决策分析报告';
+        }
+
+        // 修复计算按钮的ID选择器错误
+        document.addEventListener('DOMContentLoaded', function() {
+            // 使用有效的选择器查找计算按钮
+            let calculateButton = document.querySelector('button#calculateBtn') || 
+                                  document.querySelector('button[type="button"]') ||
+                                  document.querySelector('button');
+            
+            // 或者尝试通过文本内容查找按钮
+            if (!calculateButton) {
+                const buttons = document.querySelectorAll('button');
+                for (let btn of buttons) {
+                    if (btn.textContent.includes('计算') || btn.textContent.includes('预测')) {
+                        calculateButton = btn;
+                        break;
+                    }
+                }
+            }
+            
+            if (calculateButton) {
+                // 如果找到了按钮，添加ID以便将来引用
+                if (!calculateButton.id) {
+                    calculateButton.id = 'calculateBtn';
+                }
+                
+                calculateButton.addEventListener('click', function() {
+                    // 延迟执行以确保DOM已更新
+                    setTimeout(applyStyles, 100);
+                });
+                
+                console.log('已找到计算按钮并添加样式应用事件');
+            } else {
+                // 如果找不到计算按钮，使用MutationObserver监听DOM变化
+                console.log('未找到计算按钮，设置DOM监听...');
+                const observer = new MutationObserver(function(mutations) {
+                    let foundButton = null;
+                    const buttons = document.querySelectorAll('button');
+                    for (let btn of buttons) {
+                        if (btn.textContent.includes('计算') || btn.textContent.includes('预测')) {
+                            foundButton = btn;
+                            break;
+                        }
+                    }
+                    
+                    if (foundButton) {
+                        observer.disconnect();
+                        foundButton.id = 'calculateBtn';
+                        foundButton.addEventListener('click', applyStyles);
+                        console.log('通过DOM变化找到计算按钮');
+                    }
+                });
+                
+                observer.observe(document.body, { 
+                    childList: true, 
+                    subtree: true 
+                });
+            }
+            
+            function applyStyles() {
+                console.log('应用样式函数被调用');
+                
+                // 应用样式到标题
+                setTimeout(function() {
+                    // 获取所有结果卡片标题
+                    const cardHeaders = document.querySelectorAll('.results-card h3, #basicFinancialCard h3, #businessAnalysisCard h3');
+                    
+                    console.log('找到卡片标题数量:', cardHeaders.length);
+                    
+                    // 应用渐变背景样式
+                    cardHeaders.forEach(header => {
+                        header.style.background = 'linear-gradient(135deg, #3498db, #9b59b6)';
+                        header.style.color = 'white';
+                        console.log('应用样式到标题:', header.textContent);
+                    });
+                    
+                    // 替换主标题
+                    const resultsContainer = document.getElementById('results');
+                    if (resultsContainer) {
+                        // 查找已有标题或创建新标题
+                        let mainTitle = resultsContainer.querySelector('h2');
+                        if (!mainTitle) {
+                            mainTitle = document.createElement('h2');
+                            mainTitle.className = 'results-title';
+                            mainTitle.textContent = '决策分析报告';  // 修改这里的文本
+                            resultsContainer.insertBefore(mainTitle, resultsContainer.firstChild);
+                            console.log('创建并插入新主标题');
+                        } else {
+                            mainTitle.className = 'results-title';
+                            mainTitle.textContent = '决策分析报告';  // 修改这里的文本
+                            console.log('更新现有主标题');
+                        }
+                    }
+                }, 100);
+            }
+        });
+
+        // 修改显示现金流状况的代码
+        function updateCashFlowStatus(status) {
+            const statusElement = document.querySelector('.cash-flow-status') || document.createElement('div');
+            statusElement.className = 'cash-flow-status';
+            statusElement.textContent = status;
+            
+            // 确保状态文本显示在正确的位置
+            const cashFlowRow = document.querySelector('tr:contains("现金流状况")');
+            if (cashFlowRow) {
+                const statusCell = cashFlowRow.querySelector('td:last-child');
+                if (statusCell) {
+                    statusCell.innerHTML = ''; // 清除现有内容
+                    statusCell.appendChild(statusElement);
                 }
             }
         }
